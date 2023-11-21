@@ -1,0 +1,79 @@
+#include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+
+void sort(int arr[], int flag){
+
+if(flag==1){
+
+
+	
+	int temp;
+	for(int i=0;i<3;i++){
+		for(int j=0;j<2;j++){
+			if(arr[j]<arr[j+1]){
+				temp=arr[j+1];
+				arr[j+1]=arr[j];
+				arr[j]=temp;
+			}
+		}
+	}
+	
+	for(int i=0;i<3;i++){
+		printf("%i",arr[i]);
+		printf("\t");
+	}
+	}
+	else{
+	int temp;
+	for(int i=0;i<3;i++){
+		for(int j=0;j<2;j++){
+			if(arr[j]>arr[j+1]){
+				temp=arr[j+1];
+				arr[j+1]=arr[j];
+				arr[j]=temp;
+			}
+		}
+	}
+	
+	for(int i=0;i<3;i++){
+		printf("%i",arr[i]);
+		printf("\t");
+	}
+	}
+}
+
+ int main()
+{
+	int  c_id;
+	int arr[3]={16,11,12};
+
+	c_id=fork();
+	if(c_id==0)
+	{
+	 sleep(5);
+	 system("\nps");
+         printf("Child starting");
+         printf("Child Process ID: %d\n", getpid());
+         printf("Child Parent Process ID: %d\n", getppid());
+         sort(arr,1);
+         exit(0);
+	}
+	else if(c_id>0){
+	//sleep(5);
+	//system("\nps");
+	printf("Parent Process ID: %d\n", getpid());
+	
+ 	printf("Parent starting");
+	
+	sort(arr,0);
+	exit(0);
+	}
+	else{
+	printf("Error");
+	exit(-1); //unsuccessful
+	}
+    	return 0;
+}
