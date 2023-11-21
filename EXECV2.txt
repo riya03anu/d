@@ -1,0 +1,45 @@
+#include<stdio.h>
+#include<stdlib.h>
+void  B_S(int arr[],int num,int low,int high)
+{
+   int mid=(low+high)/2;
+   
+   if(num==arr[mid])
+   {
+  printf("%d",mid);
+  
+   }
+   else if(num<arr[mid])
+   {
+   B_S(arr,num,low,mid-1);
+  
+   }
+   else if(num>arr[mid])
+   {
+ B_S(arr,num,mid+1,high);
+  
+   }
+ 
+   
+}
+
+void main(int argc,char* argv[])
+{
+int arr[argc-1];
+
+int num;
+printf("\n Enter Element to be found:");
+scanf("%d\n",&num);
+for(int i=1;i<argc;i++)
+{
+
+arr[i-1]=atoi(argv[i]);
+}
+for(int j=0;j<argc-1;j++)
+{
+printf("%d\t",arr[j]);
+}
+B_S(arr,num,0,(argc-1));
+//printf("%d/n",n);
+
+}

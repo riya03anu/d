@@ -1,0 +1,100 @@
+#include<stdio.h>
+#include <pthread.h>
+#include <unistd.h>
+#include<stdlib.h>
+#include <semaphore.h>
+#define buffer_size 5
+sem_t s,f,e;
+int in=0;
+int out=0;
+
+int buff[buffer_size];
+
+void *producer(void *arg)
+{
+   int data;
+   sem_wait(&e);
+   sem_wait(&s);
+   data=rand()%100+1;
+   buff[in]=data;
+   printf("Producer produced data %d at index %d\n",data,in);
+   printf("Thread id of producer is %ld\n",pthread_self());
+   in=(in+1)%buffer_size ;
+   sem_post(&s);
+   sem_post(&f);
+
+}
+
+void *consumer(void *arg)
+{
+   int data,var;
+   do{
+   sem_wait(&f);
+   sem_wait(&s);
+   data=buff[out];
+   printf("Consumer consumed data %d at index %d\n",data,out);
+   printf("Thread id of consumer is %ld\n",pthread_self());
+   out=(out+1)%buffer_size ;
+   sem_post(&s);
+   sem_post(&e);
+   sem_getvalue(&e,&var);
+   }while(var!=buffer_size );
+
+}
+
+void main()
+{
+	
+	
+	sem_init(&e,0,buffer_size );
+	sem_init(&f,0,0);
+	sem_init(&s,0,1);
+	pthread_t tid[buffer_size ],ctid;
+	
+	for(int i=0;i<buffer_size ;i++)
+	{
+	pthread_create(&tid[i],NULL,producer,NULL);
+	
+	}
+	pthread_create(&ctid,NULL,consumer,NULL);
+
+for(int i=0;i<buffer_size ;i++){
+	pthread_join(tid[i],NULL);
+	
+	}
+	pthread_join(ctid,NULL);
+
+
+}
+
+
+/*OUTPUT
+student@student:~$ gcc prodcos.c -lpthread
+student@student:~$ ./a.out
+Producer produced data 84 at index 0
+Thread id of producer is 140434070304320
+Producer produced data 87 at index 1
+Thread id of producer is 140434061911616
+Producer produced data 78 at index 2
+Thread id of producer is 140434036733504
+Producer produced data 16 at index 3
+Thread id of producer is 140434045126208
+Producer produced data 94 at index 4
+Thread id of producer is 140434053518912
+Consumer consumed data 84 at index 0
+Thread id of consumer is 140433954960960
+Consumer consumed data 87 at index 1
+Thread id of consumer is 140433954960960
+Consumer consumed data 78 at index 2
+Thread id of consumer is 140433954960960
+Consumer consumed data 16 at index 3
+Thread id of consumer is 140433954960960
+Consumer consumed data 94 at index 4
+Thread id of consumer is 140433954960960
+
+
+
+
+*/
+
+
